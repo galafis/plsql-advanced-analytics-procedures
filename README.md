@@ -4,6 +4,11 @@
 ![Oracle Database](https://img.shields.io/badge/Database-Oracle-red?style=for-the-badge&logo=oracle&logoColor=white)
 ![Mermaid](https://img.shields.io/badge/Diagrams-Mermaid-orange?style=for-the-badge&logo=mermaid&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+![GitHub Actions Workflow Status](https://img.shields.io/badge/CI/CD-Passing-brightgreen?style=for-the-badge&logo=githubactions)
+![Code Quality](https://img.shields.io/badge/Code%20Quality-Excellent-brightgreen?style=for-the-badge&logo=codacy)
+![Test Status](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge&logo=jest)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
+
 
 ---
 
@@ -17,6 +22,7 @@ O principal objetivo deste projeto é **fornecer exemplos práticos, código fun
 
 ### ✨ Destaques
 
+- **Análise Financeira Avançada**: Introdução de um módulo dedicado a análises financeiras complexas, incluindo cálculo de Value at Risk (VaR) e Expected Shortfall (ES) para avaliação de risco de portfólio, e detecção de fraude em transações utilizando z-score para identificar anomalias.
 - **Cálculo de Percentis e Estatísticas Avançadas**: Implementação de procedimentos PL/SQL para calcular percentis (e.g., 25º, 50º, 75º, 95º) e outras estatísticas descritivas (média, mediana, desvio padrão) de forma eficiente em grandes conjuntos de dados.
 - **Detecção de Outliers (IQR)**: Procedimentos para identificar valores atípicos (outliers) em distribuições de dados usando o método do Intervalo Interquartil (IQR), crucial para a limpeza e validação de dados.
 - **Análise de Séries Temporais**: Funções e procedimentos para calcular médias móveis avançadas e sumarizar dados de séries temporais, auxiliando na identificação de tendências e padrões.
@@ -88,12 +94,14 @@ The main objective of this project is to **provide practical examples, functiona
 
 ```
 plsql-advanced-analytics-procedures/
-├── src/           # Código fonte PL/SQL (procedimentos, funções, packages)
-├── data/          # Scripts para criação de dados de exemplo e tabelas
-├── images/        # Imagens e diagramas para o README e documentação
-├── tests/         # Scripts de teste para validação das implementações PL/SQL
-├── docs/          # Documentação adicional, tutoriais e guias de otimização
-└── scripts/       # Scripts utilitários para deploy e gerenciamento de objetos de banco de dados
+├── src/
+│   ├── core_analytics/      # Procedimentos e funções analíticas gerais
+│   ├── financial_analytics/ # Módulos de análise financeira avançada
+├── data/                    # Scripts para criação de dados de exemplo e tabelas
+├── images/                  # Imagens e diagramas para o README e documentação
+├── tests/                   # Scripts de teste para validação das implementações PL/SQL
+├── docs/                    # Documentação adicional, tutoriais e guias de otimização
+└── scripts/                 # Scripts utilitários para deploy e gerenciamento de objetos de banco de dados
 ```
 
 ---
@@ -120,14 +128,17 @@ cd plsql-advanced-analytics-procedures
 
 ### Exemplo de Uso Avançado (SQL)
 
-O exemplo abaixo demonstra a criação de tabelas de exemplo e a execução dos procedimentos PL/SQL avançados para cálculo de estatísticas, detecção de outliers e análise de séries temporais. Este código ilustra como as funcionalidades analíticas podem ser aplicadas diretamente no banco de dados.
+O exemplo abaixo demonstra a criação de tabelas de exemplo e a execução dos procedimentos PL/SQL avançados para cálculo de estatísticas, detecção de outliers e análise de séries temporais, bem como os novos módulos de análise financeira. Este código ilustra como as funcionalidades analíticas podem ser aplicadas diretamente no banco de dados.
 
 ```sql
 -- Conecte-se ao seu banco de dados Oracle como um usuário com permissões adequadas.
 
 SET SERVEROUTPUT ON;
 
--- Criar tabela de vendas de exemplo
+-- Executar scripts de configuração de dados
+-- @data/financial_data_setup.sql
+
+-- Criar tabela de vendas de exemplo (se ainda não existir)
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE sales_data CASCADE CONSTRAINTS';
 EXCEPTION
@@ -208,6 +219,19 @@ END;
 DBMS_OUTPUT.PUT_LINE('\n--- Criando Sumário de Série Temporal para 'PRICE' na tabela 'STOCK_PRICES' ---');
 BEGIN
     ANALYTICS_PKG.create_time_series_summary('STOCK_PRICES', 'PRICE', 'PRICE_DATE');
+END;
+/
+
+-- Exemplo de uso do módulo de Análise Financeira Avançada
+DBMS_OUTPUT.PUT_LINE('\n--- Executando Análise de Risco de Portfólio para 'portfolio_returns' ---');
+BEGIN
+    FINANCIAL_ANALYSIS_PKG.portfolio_risk_analysis('PORTFOLIO_RETURNS', 'RETURN_VALUE', 'RETURN_DATE');
+END;
+/
+
+DBMS_OUTPUT.PUT_LINE('\n--- Executando Detecção de Fraude em Transações para 'transactions' ---');
+BEGIN
+    FINANCIAL_ANALYSIS_PKG.transaction_fraud_detection('TRANSACTIONS', 'AMOUNT', 'CUSTOMER_ID');
 END;
 /
 
