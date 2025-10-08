@@ -28,13 +28,7 @@ O principal objetivo deste projeto é **fornecer exemplos práticos, código fun
 - **Testes Incluídos**: Módulos de código validados através de testes unitários, garantindo a correção e a robustez das implementações.
 - **Abordagem Didática**: Conteúdo apresentado de forma didática, ideal para aprendizado e referência, com explicações claras sobre os conceitos e a aplicação prática.
 
-### 📊 Visualização
 
-![PL/SQL Advanced Analytics](images/plsql_advanced_analytics_procedures.png)
-
-*Diagrama ilustrativo do fluxo de processamento de dados e analytics com PL/SQL, destacando a interação com o Oracle Database.*
-
----
 
 ## 🇬🇧 Advanced Analytics with PL/SQL
 
