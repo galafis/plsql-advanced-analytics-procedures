@@ -382,7 +382,18 @@ BEGIN
         RETURN;
     END IF;
 
-    v_sql_query := 'CREATE OR REPLACE TABLE ' || p_summary_table_name || ' AS SELECT ';
+    -- Drop table if exists, then create new one
+    BEGIN
+        EXECUTE IMMEDIATE 'DROP TABLE ' || p_summary_table_name || ' CASCADE CONSTRAINTS';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -942 THEN -- ORA-00942: table or view does not exist
+                RAISE;
+            END IF;
+    END;
+
+    -- Create summary table
+    v_sql_query := 'CREATE TABLE ' || p_summary_table_name || ' AS SELECT ';
 
     IF UPPER(p_period) = 'DAY' THEN
         v_sql_query := v_sql_query || 'TRUNC(' || p_date_column || ') AS period_start_date, ';

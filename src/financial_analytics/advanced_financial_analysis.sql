@@ -8,7 +8,7 @@ SET SERVEROUTPUT ON;
 -- ============================================================================
 -- Pacote de Análise Financeira Avançada
 -- ============================================================================
-CREATE OR REPLACE PACKAGE financial_analysis_pkg AS
+CREATE OR REPLACE PACKAGE FINANCIAL_ANALYSIS_PKG AS
 
     -- Procedure para Análise de Risco de Portfólio
     PROCEDURE portfolio_risk_analysis(
@@ -24,10 +24,10 @@ CREATE OR REPLACE PACKAGE financial_analysis_pkg AS
         p_customer_id_column IN VARCHAR2
     );
 
-END financial_analysis_pkg;
+END FINANCIAL_ANALYSIS_PKG;
 /
 
-CREATE OR REPLACE PACKAGE BODY financial_analysis_pkg AS
+CREATE OR REPLACE PACKAGE BODY FINANCIAL_ANALYSIS_PKG AS
 
     -- ============================================================================
     -- 1. Procedure para Análise de Risco de Portfólio
@@ -110,6 +110,6 @@ CREATE OR REPLACE PACKAGE BODY financial_analysis_pkg AS
             DBMS_OUTPUT.PUT_LINE('[ERRO] Falha na detecção de fraude: ' || SQLERRM);
     END transaction_fraud_detection;
 
-END financial_analysis_pkg;
+END FINANCIAL_ANALYSIS_PKG;
 /
 
