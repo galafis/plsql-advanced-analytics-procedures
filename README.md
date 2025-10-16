@@ -163,7 +163,14 @@ plsql-advanced-analytics-procedures/
 
 ## 🚀 Getting Started
 
-Para começar, clone o repositório e explore os diretórios `src/` e `docs/` para exemplos detalhados e instruções de uso. Certifique-se de ter acesso a um ambiente Oracle Database.
+**⚡ Quick Start**: Para começar rapidamente, veja o [Guia de Início Rápido](docs/QUICK_START.md) (5 minutos)
+
+### Verificação do Ambiente
+
+```bash
+# Verificar se você tem tudo necessário
+./scripts/check_environment.sh
+```
 
 ### Pré-requisitos
 
