@@ -4,9 +4,7 @@
 ![Oracle Database](https://img.shields.io/badge/Database-Oracle-red?style=for-the-badge&logo=oracle&logoColor=white)
 ![Mermaid](https://img.shields.io/badge/Diagrams-Mermaid-orange?style=for-the-badge&logo=mermaid&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-![GitHub Actions Workflow Status](https://img.shields.io/badge/CI/CD-Passing-brightgreen?style=for-the-badge&logo=githubactions)
-![Code Quality](https://img.shields.io/badge/Code%20Quality-Excellent-brightgreen?style=for-the-badge&logo=codacy)
-![Test Status](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge&logo=jest)
+![GitHub Actions Workflow Status](https://github.com/galafis/plsql-advanced-analytics-procedures/actions/workflows/validate.yml/badge.svg)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
 
 
@@ -71,9 +69,66 @@ The main objective of this project is to **provide practical examples, functiona
 
 ### 📊 Visualization
 
-![PL/SQL Analytics Flow](diagrams/plsql_analytics_flow.png)
+#### Architecture Diagram
 
-*Diagrama ilustrativo do fluxo de procedimentos analíticos avançados em PL/SQL, destacando as etapas de processamento e os resultados gerados.*
+```mermaid
+graph LR
+    subgraph "Data Layer"
+        DATA[Raw Data Tables]
+    end
+    
+    subgraph "Analytics Layer"
+        CORE[ANALYTICS_PKG<br/>Core Analytics]
+        FIN[FINANCIAL_ANALYSIS_PKG<br/>Financial Analytics]
+    end
+    
+    subgraph "Output Layer"
+        RESULTS[Results & Reports]
+        TABLES[Summary Tables]
+        OUTPUT[DBMS_OUTPUT Logs]
+    end
+    
+    DATA --> CORE
+    DATA --> FIN
+    CORE --> RESULTS
+    CORE --> TABLES
+    CORE --> OUTPUT
+    FIN --> RESULTS
+    FIN --> OUTPUT
+    
+    style DATA fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style CORE fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style FIN fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style RESULTS fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style TABLES fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style OUTPUT fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+```
+
+#### Analytics Flow
+
+```mermaid
+graph TD
+    subgraph PL/SQL Advanced Analytics Procedures
+        A[Raw Data Table] --> B(Calculate Advanced Statistics)
+        A --> C(Calculate Moving Average)
+        A --> D(Find Outliers IQR)
+        A --> E(Create Time Series Summary)
+        B --> F[Statistical Insights]
+        C --> G[Trend Analysis]
+        D --> H[Outlier Detection Report]
+        E --> I[Aggregated Time Series Data]
+    end
+
+    style A fill:#afa,stroke:#333,stroke-width:2px
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#ccf,stroke:#333,stroke-width:2px
+    style E fill:#ffc,stroke:#333,stroke-width:2px
+    style F fill:#afa,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+    style H fill:#bbf,stroke:#333,stroke-width:2px
+    style I fill:#ccf,stroke:#333,stroke-width:2px
+```
 
 
 ---
@@ -239,6 +294,265 @@ END;
 
 ---
 
+## 🧪 Testing & Quality Assurance
+
+Este projeto inclui testes abrangentes e validação automática para garantir a qualidade do código.
+
+### Estrutura de Testes
+
+```
+tests/
+├── test_analytics_procedures.sql       # Testes unitários básicos
+└── test_integration_analytics_procedures.sql  # Testes de integração completos
+```
+
+### Executar Testes
+
+#### Método 1: Script Automatizado (Recomendado)
+
+```bash
+# Executar todos os testes
+./scripts/run_tests.sh <usuario> <senha> <connection_string>
+
+# Exemplo
+./scripts/run_tests.sh analytics analytics123 localhost:1521/XEPDB1
+```
+
+#### Método 2: Manual via SQL*Plus
+
+```bash
+# Testes unitários
+sqlplus usuario/senha@connection @tests/test_analytics_procedures.sql
+
+# Testes de integração
+sqlplus usuario/senha@connection @tests/test_integration_analytics_procedures.sql
+```
+
+### Validação de Sintaxe
+
+```bash
+# Validar sintaxe de todos os arquivos PL/SQL
+python3 validate_plsql.py
+```
+
+O validador verifica:
+- ✅ Estrutura básica de PL/SQL
+- ✅ Pares BEGIN/END balanceados
+- ✅ Sintaxe SQL inválida (como `CREATE OR REPLACE TABLE`)
+- ✅ Presença de keywords PL/SQL
+
+### CI/CD com GitHub Actions
+
+O repositório inclui workflow automatizado que executa em cada push/PR:
+
+```yaml
+# .github/workflows/validate.yml
+- Validação de sintaxe PL/SQL
+- Verificação de arquivos obrigatórios
+- Geração de relatórios de validação
+- Upload de artefatos
+```
+
+**Status do CI/CD**: ![GitHub Actions](https://github.com/galafis/plsql-advanced-analytics-procedures/actions/workflows/validate.yml/badge.svg)
+
+### Cobertura de Testes
+
+Os testes cobrem:
+- ✅ Cálculo de estatísticas descritivas
+- ✅ Geração de médias móveis (SMA/EMA)
+- ✅ Detecção de outliers com IQR
+- ✅ Criação de resumos de séries temporais
+- ✅ Análise de risco financeiro (VaR/ES)
+- ✅ Detecção de fraude com z-score
+- ✅ Validação de entrada e tratamento de erros
+
+---
+
+## 📦 Deployment
+
+### Opção 1: Deploy Automatizado
+
+```bash
+# Clone o repositório
+git clone https://github.com/galafis/plsql-advanced-analytics-procedures.git
+cd plsql-advanced-analytics-procedures
+
+# Execute o script de deploy
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh <usuario> <senha> <connection_string>
+```
+
+O script automaticamente:
+1. Valida a conexão com o banco de dados
+2. Deploya o pacote `ANALYTICS_PKG`
+3. Deploya o pacote `FINANCIAL_ANALYSIS_PKG`
+4. Opcionalmente cria dados de exemplo
+
+### Opção 2: Deploy Manual Passo a Passo
+
+```sql
+-- 1. Conectar ao banco de dados
+sqlplus usuario/senha@connection_string
+
+-- 2. Deploy pacote Core Analytics
+@src/core_analytics/analytics_package.sql
+
+-- 3. Verificar criação do pacote
+SELECT object_name, object_type, status 
+FROM user_objects 
+WHERE object_name = 'ANALYTICS_PKG';
+
+-- 4. Deploy pacote Financial Analysis  
+@src/financial_analytics/advanced_financial_analysis.sql
+
+-- 5. Verificar criação do pacote
+SELECT object_name, object_type, status 
+FROM user_objects 
+WHERE object_name = 'FINANCIAL_ANALYSIS_PKG';
+
+-- 6. (Opcional) Criar dados de exemplo
+@data/financial_data_setup.sql
+```
+
+### Verificação Pós-Deploy
+
+```sql
+-- Verificar se os pacotes foram criados corretamente
+SELECT object_name, object_type, status 
+FROM user_objects 
+WHERE object_name IN ('ANALYTICS_PKG', 'FINANCIAL_ANALYSIS_PKG')
+ORDER BY object_name, object_type;
+
+-- Resultado esperado:
+-- ANALYTICS_PKG          PACKAGE        VALID
+-- ANALYTICS_PKG          PACKAGE BODY   VALID
+-- FINANCIAL_ANALYSIS_PKG PACKAGE        VALID
+-- FINANCIAL_ANALYSIS_PKG PACKAGE BODY   VALID
+```
+
+---
+
+## 📚 Documentation
+
+### Documentação Disponível
+
+- **[Documentação Completa](docs/DOCUMENTATION.md)**: Guia detalhado de uso, exemplos e troubleshooting
+- **README.md**: Este arquivo - visão geral e quick start
+- **Comentários no Código**: Cada procedimento é documentado inline
+
+### Estrutura da Documentação
+
+```
+docs/
+└── DOCUMENTATION.md
+    ├── Visão Geral
+    ├── Arquitetura
+    ├── Instalação e Configuração
+    ├── Módulos e Procedimentos
+    ├── Exemplos de Uso
+    ├── Testes
+    ├── Melhores Práticas
+    └── Resolução de Problemas
+```
+
+---
+
+## 🛡️ Best Practices & Security
+
+### Segurança
+
+✅ **Validação de Entrada**: Todos os procedimentos validam nomes de tabelas e colunas  
+✅ **Prevenção de SQL Injection**: Uso de `user_tables` e `user_tab_columns` para validação  
+✅ **Tratamento de Erros**: Exception handling robusto em todos os procedimentos  
+✅ **Logging**: Mensagens detalhadas via `DBMS_OUTPUT`
+
+### Performance
+
+✅ **Funções Analíticas**: Uso de funções window para performance otimizada  
+✅ **Índices Recomendados**: Documentação de índices para melhor performance  
+✅ **Bulk Operations**: Uso de BULK COLLECT onde apropriado  
+✅ **Particionamento**: Suporte a particionamento de dados
+
+### Manutenibilidade
+
+✅ **Código Modular**: Organizado em packages reutilizáveis  
+✅ **Nomenclatura Consistente**: Padrões de nomenclatura claros  
+✅ **Documentação Inline**: Comentários explicativos no código  
+✅ **Versionamento**: Controle de versão com Git
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### Erro: "Tabela não encontrada"
+```sql
+-- Verificar se a tabela existe
+SELECT table_name FROM user_tables WHERE table_name = 'NOME_TABELA';
+```
+
+#### Erro: "Package não compilado"
+```sql
+-- Recompilar package
+ALTER PACKAGE ANALYTICS_PKG COMPILE;
+ALTER PACKAGE ANALYTICS_PKG COMPILE BODY;
+
+-- Verificar erros
+SELECT * FROM user_errors WHERE name = 'ANALYTICS_PKG';
+```
+
+#### Performance Lenta
+```sql
+-- Atualizar estatísticas
+EXEC DBMS_STATS.GATHER_TABLE_STATS(USER, 'NOME_TABELA');
+
+-- Criar índice
+CREATE INDEX idx_nome ON tabela(coluna);
+```
+
+Veja mais em [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md#resolução-de-problemas)
+
+---
+
+## 📈 Roadmap
+
+### Versão 1.1 (Planejada)
+
+- [ ] Suporte a análise de séries temporais com sazonalidade
+- [ ] Implementação de testes automatizados com utPLSQL
+- [ ] Dashboard interativo com APEX
+- [ ] Exportação de resultados para CSV/JSON
+- [ ] Integração com ferramentas de BI (Power BI, Tableau)
+
+### Versão 2.0 (Futuro)
+
+- [ ] Machine Learning básico em PL/SQL
+- [ ] Análise preditiva
+- [ ] Clustering e segmentação
+- [ ] API REST para acesso externo
+
+---
+
+## 👥 Contributing
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Fork o repositório
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+### Diretrizes de Contribuição
+
+- Siga os padrões de código existentes
+- Adicione testes para novas funcionalidades
+- Atualize a documentação
+- Certifique-se de que todos os testes passam
+
+---
+
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, enviar pull requests ou sugerir melhorias. Por favor, siga as diretrizes de contribuição.
@@ -251,4 +565,19 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-**Autor:** Gabriel Demetrios Lafis  \n**Ano:** 2025
+## 📞 Contact & Support
+
+**Autor:** Gabriel Demetrios Lafis  
+**Ano:** 2025  
+**GitHub:** [@galafis](https://github.com/galafis)
+
+### Suporte
+
+Para obter ajuda:
+1. Consulte a [documentação completa](docs/DOCUMENTATION.md)
+2. Verifique as [issues existentes](https://github.com/galafis/plsql-advanced-analytics-procedures/issues)
+3. Abra uma nova issue se necessário
+
+---
+
+**⭐ Se este projeto foi útil, considere dar uma estrela no GitHub!**

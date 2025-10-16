@@ -1,0 +1,84 @@
+name: PL/SQL Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate PL/SQL Syntax
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Run PL/SQL syntax validator
+      run: |
+        python3 validate_plsql.py
+        
+    - name: Check for critical SQL files
+      run: |
+        echo "Checking required files..."
+        required_files=(
+          "src/core_analytics/analytics_package.sql"
+          "src/financial_analytics/advanced_financial_analysis.sql"
+          "data/financial_data_setup.sql"
+        )
+        
+        all_exist=true
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            all_exist=false
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+        if [ "$all_exist" = false ]; then
+          exit 1
+        fi
+        
+    - name: Generate validation report
+      if: always()
+      run: |
+        echo "# PL/SQL Validation Report" > validation-report.md
+        echo "" >> validation-report.md
+        echo "## Files Validated" >> validation-report.md
+        echo "" >> validation-report.md
+        find src data tests -name "*.sql" -type f | while read file; do
+          echo "- \`$file\`" >> validation-report.md
+        done
+        echo "" >> validation-report.md
+        echo "## Statistics" >> validation-report.md
+        echo "" >> validation-report.md
+        echo "- Total SQL files: $(find . -name '*.sql' -type f | wc -l)" >> validation-report.md
+        echo "- Lines of code: $(find . -name '*.sql' -type f -exec wc -l {} + | tail -1 | awk '{print $1}')" >> validation-report.md
+        cat validation-report.md
+        
+    - name: Upload validation report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: validation-report
+        path: validation-report.md
+        
+    - name: Summary
+      if: success()
+      run: |
+        echo "✅ All PL/SQL validations passed successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Validated Components:" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Core Analytics Package" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Financial Analysis Package" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Data Setup Scripts" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Test Scripts" >> $GITHUB_STEP_SUMMARY
