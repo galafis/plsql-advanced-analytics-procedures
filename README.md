@@ -4,7 +4,6 @@
 ![Oracle Database](https://img.shields.io/badge/Database-Oracle-red?style=for-the-badge&logo=oracle&logoColor=white)
 ![Mermaid](https://img.shields.io/badge/Diagrams-Mermaid-orange?style=for-the-badge&logo=mermaid&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-![GitHub Actions Workflow Status](https://github.com/galafis/plsql-advanced-analytics-procedures/actions/workflows/validate.yml/badge.svg)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
 
 
@@ -347,20 +346,6 @@ O validador verifica:
 - ✅ Pares BEGIN/END balanceados
 - ✅ Sintaxe SQL inválida (como `CREATE OR REPLACE TABLE`)
 - ✅ Presença de keywords PL/SQL
-
-### CI/CD com GitHub Actions
-
-O repositório inclui workflow automatizado que executa em cada push/PR:
-
-```yaml
-# .github/workflows/validate.yml
-- Validação de sintaxe PL/SQL
-- Verificação de arquivos obrigatórios
-- Geração de relatórios de validação
-- Upload de artefatos
-```
-
-**Status do CI/CD**: ![GitHub Actions](https://github.com/galafis/plsql-advanced-analytics-procedures/actions/workflows/validate.yml/badge.svg)
 
 ### Cobertura de Testes
 
