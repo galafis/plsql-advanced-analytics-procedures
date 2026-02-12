@@ -228,15 +228,15 @@ INSERT INTO sales_data (sale_id, product_category, amount, sale_date) VALUES (10
 COMMIT;
 
 -- Exemplo de uso do procedimento calculate_advanced_statistics
-DBMS_OUTPUT.PUT_LINE('\n--- Calculando Estatísticas Avançadas para 'AMOUNT' na tabela 'SALES_DATA' ---');
 BEGIN
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Calculando Estatísticas Avançadas para AMOUNT na tabela SALES_DATA ---');
     ANALYTICS_PKG.calculate_advanced_statistics('SALES_DATA', 'AMOUNT');
 END;
 /
 
 -- Exemplo de uso do procedimento find_outliers_iqr
-DBMS_OUTPUT.PUT_LINE('\n--- Detectando Outliers para 'AMOUNT' na tabela 'SALES_DATA' ---');
 BEGIN
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Detectando Outliers para AMOUNT na tabela SALES_DATA ---');
     ANALYTICS_PKG.find_outliers_iqr('SALES_DATA', 'AMOUNT');
 END;
 /
@@ -270,28 +270,28 @@ INSERT INTO stock_prices (price_id, symbol, price, price_date) VALUES (10, 'GOOG
 COMMIT;
 
 -- Exemplo de uso do procedimento calculate_moving_average_advanced
-DBMS_OUTPUT.PUT_LINE('\n--- Calculando Média Móvel Avançada para 'PRICE' na tabela 'STOCK_PRICES' (janela de 3 dias) ---');
 BEGIN
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Calculando Média Móvel Avançada para PRICE na tabela STOCK_PRICES (janela de 3 dias) ---');
     ANALYTICS_PKG.calculate_moving_average_advanced('STOCK_PRICES', 'PRICE', 'PRICE_DATE', 3);
 END;
 /
 
 -- Exemplo de uso do procedimento create_time_series_summary
-DBMS_OUTPUT.PUT_LINE('\n--- Criando Sumário de Série Temporal para 'PRICE' na tabela 'STOCK_PRICES' ---');
 BEGIN
-    ANALYTICS_PKG.create_time_series_summary('STOCK_PRICES', 'PRICE', 'PRICE_DATE');
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Criando Sumário de Série Temporal para PRICE na tabela STOCK_PRICES ---');
+    ANALYTICS_PKG.create_time_series_summary('STOCK_PRICES', 'PRICE_DATE', 'PRICE');
 END;
 /
 
 -- Exemplo de uso do módulo de Análise Financeira Avançada
-DBMS_OUTPUT.PUT_LINE('\n--- Executando Análise de Risco de Portfólio para 'portfolio_returns' ---');
 BEGIN
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Executando Análise de Risco de Portfólio para portfolio_returns ---');
     FINANCIAL_ANALYSIS_PKG.portfolio_risk_analysis('PORTFOLIO_RETURNS', 'RETURN_VALUE', 'RETURN_DATE');
 END;
 /
 
-DBMS_OUTPUT.PUT_LINE('\n--- Executando Detecção de Fraude em Transações para 'transactions' ---');
 BEGIN
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || '--- Executando Detecção de Fraude em Transações para transactions ---');
     FINANCIAL_ANALYSIS_PKG.transaction_fraud_detection('TRANSACTIONS', 'AMOUNT', 'CUSTOMER_ID');
 END;
 /
@@ -545,12 +545,6 @@ Contribuições são bem-vindas! Para contribuir:
 
 ---
 
-## 🤝 Contribuição
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, enviar pull requests ou sugerir melhorias. Por favor, siga as diretrizes de contribuição.
-
----
-
 ## 📝 Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
@@ -569,7 +563,3 @@ Para obter ajuda:
 1. Consulte a [documentação completa](docs/DOCUMENTATION.md)
 2. Verifique as [issues existentes](https://github.com/galafis/plsql-advanced-analytics-procedures/issues)
 3. Abra uma nova issue se necessário
-
----
-
-**⭐ Se este projeto foi útil, considere dar uma estrela no GitHub!**

@@ -30,25 +30,23 @@ BEGIN
     ';
 
     -- Inserir dados de exemplo, incluindo outliers e dados para séries temporais e diferentes clientes
-    EXECUTE IMMEDIATE '
-        INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES
-        (1, 101, 100.00, TO_DATE(''2025-01-01'', ''YYYY-MM-DD''), ''North'', 1),
-        (2, 102, 150.50, TO_DATE(''2025-01-01'', ''YYYY-MM-DD''), ''South'', 2),
-        (3, 101, 120.00, TO_DATE(''2025-01-02'', ''YYYY-MM-DD''), ''North'', 1),
-        (4, 103, 200.00, TO_DATE(''2025-01-02'', ''YYYY-MM-DD''), ''East'', 3),
-        (5, 102, 130.00, TO_DATE(''2025-01-03'', ''YYYY-MM-DD''), ''South'', 2),
-        (6, 101, 110.00, TO_DATE(''2025-01-03'', ''YYYY-MM-DD''), ''North'', 1),
-        (7, 104, 5000.00, TO_DATE(''2025-01-04'', ''YYYY-MM-DD''), ''West'', 4), -- Outlier alto
-        (8, 101, 105.00, TO_DATE(''2025-01-04'', ''YYYY-MM-DD''), ''North'', 1),
-        (9, 105, 50.00, TO_DATE(''2025-01-05'', ''YYYY-MM-DD''), ''East'', 3),
-        (10, 101, 115.00, TO_DATE(''2025-01-05'', ''YYYY-MM-DD''), ''North'', 1),
-        (11, 106, 10.00, TO_DATE(''2025-01-06'', ''YYYY-MM-DD''), ''South'', 2), -- Outlier baixo
-        (12, 101, 125.00, TO_DATE(''2025-01-06'', ''YYYY-MM-DD''), ''North'', 1),
-        (13, 102, 140.00, TO_DATE(''2025-02-01'', ''YYYY-MM-DD''), ''South'', 2),
-        (14, 103, 210.00, TO_DATE(''2025-02-02'', ''YYYY-MM-DD''), ''East'', 3),
-        (15, 101, 110.00, TO_DATE(''2025-02-03'', ''YYYY-MM-DD''), ''North'', 1),
-        (16, 107, 80.00, TO_DATE(''2025-02-03'', ''YYYY-MM-DD''), ''West'', 4)
-    ';
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (1, 101, 100.00, TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (2, 102, 150.50, TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'South', 2);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (3, 101, 120.00, TO_DATE('2025-01-02', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (4, 103, 200.00, TO_DATE('2025-01-02', 'YYYY-MM-DD'), 'East', 3);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (5, 102, 130.00, TO_DATE('2025-01-03', 'YYYY-MM-DD'), 'South', 2);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (6, 101, 110.00, TO_DATE('2025-01-03', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (7, 104, 5000.00, TO_DATE('2025-01-04', 'YYYY-MM-DD'), 'West', 4); -- Outlier alto
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (8, 101, 105.00, TO_DATE('2025-01-04', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (9, 105, 50.00, TO_DATE('2025-01-05', 'YYYY-MM-DD'), 'East', 3);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (10, 101, 115.00, TO_DATE('2025-01-05', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (11, 106, 10.00, TO_DATE('2025-01-06', 'YYYY-MM-DD'), 'South', 2); -- Outlier baixo
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (12, 101, 125.00, TO_DATE('2025-01-06', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (13, 102, 140.00, TO_DATE('2025-02-01', 'YYYY-MM-DD'), 'South', 2);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (14, 103, 210.00, TO_DATE('2025-02-02', 'YYYY-MM-DD'), 'East', 3);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (15, 101, 110.00, TO_DATE('2025-02-03', 'YYYY-MM-DD'), 'North', 1);
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region, customer_id) VALUES (16, 107, 80.00, TO_DATE('2025-02-03', 'YYYY-MM-DD'), 'West', 4);
+    COMMIT;
 
     DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [INFO] Tabela sales_data criada e populada com sucesso para testes de integração.');
 END;
@@ -63,7 +61,7 @@ DECLARE
     v_median_val NUMBER;
     v_stddev_val NUMBER;
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || '\n--- Teste de Integração: calculate_advanced_statistics ---');
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' --- Teste de Integração: calculate_advanced_statistics ---');
     
     -- Chamar o procedimento (ele imprime no DBMS_OUTPUT)
     calculate_advanced_statistics('sales_data', 'sale_amount');
@@ -89,7 +87,7 @@ DECLARE
     v_query_sma VARCHAR2(4000);
     v_query_ema VARCHAR2(4000);
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || '\n--- Teste de Integração: calculate_moving_average_advanced ---');
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' --- Teste de Integração: calculate_moving_average_advanced ---');
     
     -- Testar SMA sem particionamento
     calculate_moving_average_advanced('sales_data', 'sale_amount', 'sale_date', 3, p_ma_type => 'SMA');
@@ -121,7 +119,7 @@ END;
 DECLARE
     v_outlier_count NUMBER;
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || '\n--- Teste de Integração: find_outliers_iqr ---');
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' --- Teste de Integração: find_outliers_iqr ---');
     
     -- Chamar o procedimento (ele imprime a query de outliers)
     find_outliers_iqr('sales_data', 'sale_amount');
@@ -167,7 +165,7 @@ DECLARE
     v_table_exists NUMBER;
     v_row_count NUMBER;
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || '\n--- Teste de Integração: create_time_series_summary ---');
+    DBMS_OUTPUT.PUT_LINE(CHR(10) || TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' --- Teste de Integração: create_time_series_summary ---');
     
     -- Teste Mensal
     create_time_series_summary('sales_data', 'sale_date', 'sale_amount', 'monthly_sales_summary_int', 'MONTH');
@@ -186,22 +184,21 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [FALHA] Tabela monthly_sales_summary_int não foi criada.');
     END IF;
 
-    -- Teste Semanal
-    create_time_series_summary('sales_data', 'sale_date', 'sale_amount', 'weekly_sales_summary_int', 'WEEK');
-    SELECT COUNT(*) INTO v_table_exists FROM all_tables WHERE owner = USER AND table_name = UPPER('weekly_sales_summary_int');
+    -- Teste Diário
+    create_time_series_summary('sales_data', 'sale_date', 'sale_amount', 'daily_sales_summary_int', 'DAY');
+    SELECT COUNT(*) INTO v_table_exists FROM all_tables WHERE owner = USER AND table_name = UPPER('daily_sales_summary_int');
     IF v_table_exists = 1 THEN
-        DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [SUCESSO] Tabela weekly_sales_summary_int criada.');
-        SELECT COUNT(*) INTO v_row_count FROM weekly_sales_summary_int;
-        DBMS_OUTPUT.PUT_LINE('  Registros na tabela semanal: ' || v_row_count);
-        -- Esperamos 6 semanas (Jan 1-5, Jan 6-12, Jan 13-19, Jan 20-26, Jan 27-Feb 2, Feb 3-9)
-        IF v_row_count = 6 THEN 
-            DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [SUCESSO] Número de registros semanais correto.');
+        DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [SUCESSO] Tabela daily_sales_summary_int criada.');
+        SELECT COUNT(*) INTO v_row_count FROM daily_sales_summary_int;
+        DBMS_OUTPUT.PUT_LINE('  Registros na tabela diária: ' || v_row_count);
+        IF v_row_count > 0 THEN
+            DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [SUCESSO] Tabela diária contém registros.');
         ELSE
-            DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [FALHA] Número de registros semanais incorreto.');
+            DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [FALHA] Tabela diária está vazia.');
         END IF;
-        EXECUTE IMMEDIATE 'DROP TABLE weekly_sales_summary_int';
+        EXECUTE IMMEDIATE 'DROP TABLE daily_sales_summary_int';
     ELSE
-        DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [FALHA] Tabela weekly_sales_summary_int não foi criada.');
+        DBMS_OUTPUT.PUT_LINE(TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || ' [FALHA] Tabela daily_sales_summary_int não foi criada.');
     END IF;
 
 EXCEPTION

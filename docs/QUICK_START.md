@@ -190,7 +190,3 @@ END;
 - 📖 [Documentação Completa](docs/DOCUMENTATION.md)
 - 🐛 [Reportar Issues](https://github.com/galafis/plsql-advanced-analytics-procedures/issues)
 - 💬 [Discussões](https://github.com/galafis/plsql-advanced-analytics-procedures/discussions)
-
----
-
-**Bom trabalho com suas análises! 🚀**

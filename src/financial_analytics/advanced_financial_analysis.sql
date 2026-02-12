@@ -42,23 +42,26 @@ CREATE OR REPLACE PACKAGE BODY FINANCIAL_ANALYSIS_PKG AS
         v_es_95 NUMBER;
         v_sql_query VARCHAR2(2000);
     BEGIN
-        -- Lógica para calcular VaR e ES
-        v_sql_query := 
-            q'[WITH returns AS (
-                SELECT 
-                    (t.']' || p_value_column || q'[' - LAG(t.']' || p_value_column || q'[, 1, t.']' || p_value_column || q'[) OVER (ORDER BY t.']' || p_date_column || q'[')) / LAG(t.']' || p_value_column || q'[, 1, t.']' || p_value_column || q'[) OVER (ORDER BY t.']' || p_date_column || q'[) AS daily_return
-                FROM ]' || p_portfolio_table || q'[ t
-            )
-            SELECT 
-                PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY daily_return) AS var_95,
-                AVG(CASE WHEN daily_return < PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY daily_return) THEN daily_return ELSE NULL END) AS es_95
-            FROM returns]';
+        -- Calcular retornos diários, VaR e Expected Shortfall
+        v_sql_query :=
+            'WITH returns AS (' ||
+            ' SELECT (t.' || p_value_column || ' - LAG(t.' || p_value_column || ') OVER (ORDER BY t.' || p_date_column || '))' ||
+            ' / NULLIF(LAG(t.' || p_value_column || ') OVER (ORDER BY t.' || p_date_column || '), 0) AS daily_return' ||
+            ' FROM ' || p_portfolio_table || ' t' ||
+            '), var_calc AS (' ||
+            ' SELECT PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY daily_return) AS var_value' ||
+            ' FROM returns WHERE daily_return IS NOT NULL' ||
+            ')' ||
+            ' SELECT v.var_value,' ||
+            ' (SELECT AVG(r.daily_return) FROM returns r' ||
+            '  WHERE r.daily_return IS NOT NULL AND r.daily_return <= v.var_value)' ||
+            ' FROM var_calc v';
 
         EXECUTE IMMEDIATE v_sql_query INTO v_var_95, v_es_95;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] Análise de Risco do Portfólio:');
-        DBMS_OUTPUT.PUT_LINE('  Value at Risk (VaR 95%): ' || TO_CHAR(v_var_95 * 100, 'FM999D00') || '%');
-        DBMS_OUTPUT.PUT_LINE('  Expected Shortfall (ES 95%): ' || TO_CHAR(v_es_95 * 100, 'FM999D00') || '%');
+        DBMS_OUTPUT.PUT_LINE('  Value at Risk (VaR 95%): ' || TO_CHAR(v_var_95 * 100, 'FM990D00') || '%');
+        DBMS_OUTPUT.PUT_LINE('  Expected Shortfall (ES 95%): ' || TO_CHAR(NVL(v_es_95, v_var_95) * 100, 'FM990D00') || '%');
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -79,29 +82,28 @@ CREATE OR REPLACE PACKAGE BODY FINANCIAL_ANALYSIS_PKG AS
         TYPE result_table IS TABLE OF result_rec;
         l_results result_table;
     BEGIN
-        -- Lógica para detecção de fraude
-        v_sql_query := 
-            q'[WITH stats AS (
-                SELECT 
-                    ']' || p_customer_id_column || q'[,
-                    AVG(']' || p_amount_column || q'[) as avg_amount,
-                    STDDEV(']' || p_amount_column || q'[) as stddev_amount
-                FROM ]' || p_transactions_table || q'[
-                GROUP BY ]' || p_customer_id_column || q'[
-            )
-            SELECT 
-                t.']' || p_customer_id_column || q'[,
-                t.']' || p_amount_column || q'[,
-                (t.']' || p_amount_column || q'[ - s.avg_amount) / s.stddev_amount AS z_score
-            FROM ]' || p_transactions_table || q'[ t
-            JOIN stats s ON t.']' || p_customer_id_column || q'[ = s.']' || p_customer_id_column || q'[']';
+        -- Calcular z-score por cliente para identificar transações anômalas
+        v_sql_query :=
+            'WITH stats AS (' ||
+            ' SELECT ' || p_customer_id_column || ',' ||
+            ' AVG(' || p_amount_column || ') AS avg_amount,' ||
+            ' STDDEV(' || p_amount_column || ') AS stddev_amount' ||
+            ' FROM ' || p_transactions_table ||
+            ' GROUP BY ' || p_customer_id_column ||
+            ')' ||
+            ' SELECT t.' || p_customer_id_column || ',' ||
+            ' t.' || p_amount_column || ',' ||
+            ' CASE WHEN s.stddev_amount = 0 OR s.stddev_amount IS NULL THEN 0' ||
+            ' ELSE (t.' || p_amount_column || ' - s.avg_amount) / s.stddev_amount END' ||
+            ' FROM ' || p_transactions_table || ' t' ||
+            ' JOIN stats s ON t.' || p_customer_id_column || ' = s.' || p_customer_id_column;
 
         EXECUTE IMMEDIATE v_sql_query BULK COLLECT INTO l_results;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] Detecção de Fraude em Transações (Z-score > 3):');
         FOR i IN 1..l_results.COUNT LOOP
-            IF l_results(i).z_score > 3 THEN
-                DBMS_OUTPUT.PUT_LINE('  Cliente: ' || l_results(i).customer_id || ', Valor: ' || l_results(i).amount || ', Z-score: ' || l_results(i).z_score);
+            IF ABS(l_results(i).z_score) > 3 THEN
+                DBMS_OUTPUT.PUT_LINE('  Cliente: ' || l_results(i).customer_id || ', Valor: ' || l_results(i).amount || ', Z-score: ' || ROUND(l_results(i).z_score, 2));
             END IF;
         END LOOP;
 

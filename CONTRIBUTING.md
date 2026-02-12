@@ -267,7 +267,7 @@ test: adiciona testes de integração para financial_analysis
 
 ### 4. Review Process
 
-- ✅ CI/CD deve passar (GitHub Actions)
+- ✅ Validação de sintaxe deve passar (`python3 validate_plsql.py`)
 - ✅ Code review por mantenedor
 - ✅ Testes devem estar incluídos
 - ✅ Documentação deve estar atualizada
@@ -368,7 +368,3 @@ Antes de submeter, verifique:
 ## 🙏 Agradecimentos
 
 Obrigado por contribuir para tornar este projeto melhor! Toda contribuição é valiosa.
-
----
-
-**Happy Coding! 🚀**

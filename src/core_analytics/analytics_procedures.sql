@@ -450,8 +450,14 @@ DECLARE
     v_q1 NUMBER;
     v_q3 NUMBER;
 BEGIN
-    -- Criar uma tabela de exemplo para demonstração
-    EXECUTE IMMEDIATE 'DROP TABLE IF EXISTS sales_data';
+    -- Remover tabela existente
+    BEGIN
+        EXECUTE IMMEDIATE 'DROP TABLE sales_data CASCADE CONSTRAINTS';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -942 THEN RAISE; END IF;
+    END;
+
     EXECUTE IMMEDIATE '
         CREATE TABLE sales_data (
             sale_id NUMBER PRIMARY KEY,
@@ -463,24 +469,22 @@ BEGIN
     ';
 
     -- Inserir dados de exemplo, incluindo alguns outliers e dados para séries temporais
-    EXECUTE IMMEDIATE '
-        INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES
-        (1, 101, 100.00, TO_DATE(''2025-01-01'', ''YYYY-MM-DD''), ''North''),
-        (2, 102, 150.50, TO_DATE(''2025-01-01'', ''YYYY-MM-DD''), ''South''),
-        (3, 101, 120.00, TO_DATE(''2025-01-02'', ''YYYY-MM-DD''), ''North''),
-        (4, 103, 200.00, TO_DATE(''2025-01-02'', ''YYYY-MM-DD''), ''East''),
-        (5, 102, 130.00, TO_DATE(''2025-01-03'', ''YYYY-MM-DD''), ''South''),
-        (6, 101, 110.00, TO_DATE(''2025-01-03'', ''YYYY-MM-DD''), ''North''),
-        (7, 104, 5000.00, TO_DATE(''2025-01-04'', ''YYYY-MM-DD''), ''West''), -- Outlier
-        (8, 101, 105.00, TO_DATE(''2025-01-04'', ''YYYY-MM-DD''), ''North''),
-        (9, 105, 50.00, TO_DATE(''2025-01-05'', ''YYYY-MM-DD''), ''East''),
-        (10, 101, 115.00, TO_DATE(''2025-01-05'', ''YYYY-MM-DD''), ''North''),
-        (11, 106, 10.00, TO_DATE(''2025-01-06'', ''YYYY-MM-DD''), ''South''), -- Outlier
-        (12, 101, 125.00, TO_DATE(''2025-01-06'', ''YYYY-MM-DD''), ''North''),
-        (13, 102, 140.00, TO_DATE(''2025-02-01'', ''YYYY-MM-DD''), ''South''),
-        (14, 103, 210.00, TO_DATE(''2025-02-02'', ''YYYY-MM-DD''), ''East''),
-        (15, 101, 110.00, TO_DATE(''2025-02-03'', ''YYYY-MM-DD''), ''North'')
-    ';
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (1, 101, 100.00, TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (2, 102, 150.50, TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'South');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (3, 101, 120.00, TO_DATE('2025-01-02', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (4, 103, 200.00, TO_DATE('2025-01-02', 'YYYY-MM-DD'), 'East');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (5, 102, 130.00, TO_DATE('2025-01-03', 'YYYY-MM-DD'), 'South');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (6, 101, 110.00, TO_DATE('2025-01-03', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (7, 104, 5000.00, TO_DATE('2025-01-04', 'YYYY-MM-DD'), 'West'); -- Outlier
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (8, 101, 105.00, TO_DATE('2025-01-04', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (9, 105, 50.00, TO_DATE('2025-01-05', 'YYYY-MM-DD'), 'East');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (10, 101, 115.00, TO_DATE('2025-01-05', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (11, 106, 10.00, TO_DATE('2025-01-06', 'YYYY-MM-DD'), 'South'); -- Outlier
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (12, 101, 125.00, TO_DATE('2025-01-06', 'YYYY-MM-DD'), 'North');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (13, 102, 140.00, TO_DATE('2025-02-01', 'YYYY-MM-DD'), 'South');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (14, 103, 210.00, TO_DATE('2025-02-02', 'YYYY-MM-DD'), 'East');
+    INSERT INTO sales_data (sale_id, product_id, sale_amount, sale_date, region) VALUES (15, 101, 110.00, TO_DATE('2025-02-03', 'YYYY-MM-DD'), 'North');
+    COMMIT;
 
     DBMS_OUTPUT.PUT_LINE(
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
@@ -488,37 +492,37 @@ BEGIN
     );
 
     -- Exemplo 1: Calcular estatísticas avançadas
-    DBMS_OUTPUT.PUT_LINE(
+    DBMS_OUTPUT.PUT_LINE(CHR(10) ||
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
-        '\n--- Chamando calculate_advanced_statistics para sale_amount ---'
+        ' --- Chamando calculate_advanced_statistics para sale_amount ---'
     );
     calculate_advanced_statistics('sales_data', 'sale_amount');
 
     -- Exemplo 2: Calcular média móvel simples (SMA) sem particionamento
-    DBMS_OUTPUT.PUT_LINE(
+    DBMS_OUTPUT.PUT_LINE(CHR(10) ||
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
-        '\n--- Chamando calculate_moving_average_advanced (SMA, Janela 3) ---'
+        ' --- Chamando calculate_moving_average_advanced (SMA, Janela 3) ---'
     );
     calculate_moving_average_advanced('sales_data', 'sale_amount', 'sale_date', 3, p_ma_type => 'SMA');
 
     -- Exemplo 3: Calcular média móvel exponencial (EMA) particionada por região
-    DBMS_OUTPUT.PUT_LINE(
+    DBMS_OUTPUT.PUT_LINE(CHR(10) ||
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
-        '\n--- Chamando calculate_moving_average_advanced (EMA, Janela 2, Partição por Região) ---'
+        ' --- Chamando calculate_moving_average_advanced (EMA, Janela 2, Partição por Região) ---'
     );
     calculate_moving_average_advanced('sales_data', 'sale_amount', 'sale_date', 2, 'region', 'EMA');
 
     -- Exemplo 4: Encontrar outliers usando IQR
-    DBMS_OUTPUT.PUT_LINE(
+    DBMS_OUTPUT.PUT_LINE(CHR(10) ||
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
-        '\n--- Chamando find_outliers_iqr para sale_amount ---'
+        ' --- Chamando find_outliers_iqr para sale_amount ---'
     );
     find_outliers_iqr('sales_data', 'sale_amount');
 
     -- Exemplo 5: Criar tabela de resumo de séries temporais por mês
-    DBMS_OUTPUT.PUT_LINE(
+    DBMS_OUTPUT.PUT_LINE(CHR(10) ||
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
-        '\n--- Chamando create_time_series_summary (Mensal) ---'
+        ' --- Chamando create_time_series_summary (Mensal) ---'
     );
     create_time_series_summary('sales_data', 'sale_date', 'sale_amount', 'monthly_sales_summary', 'MONTH');
 
@@ -532,8 +536,8 @@ BEGIN
     END LOOP;
 
     -- Limpar a tabela de exemplo
-    EXECUTE IMMEDIATE 'DROP TABLE sales_data';
-    EXECUTE IMMEDIATE 'DROP TABLE monthly_sales_summary';
+    EXECUTE IMMEDIATE 'DROP TABLE sales_data CASCADE CONSTRAINTS';
+    EXECUTE IMMEDIATE 'DROP TABLE monthly_sales_summary CASCADE CONSTRAINTS';
     DBMS_OUTPUT.PUT_LINE(
         TO_CHAR(SYSTIMESTAMP, 'YYYY-MM-DD HH24:MI:SS') || 
         ' [INFO] Tabelas de exemplo sales_data e monthly_sales_summary removidas.'
